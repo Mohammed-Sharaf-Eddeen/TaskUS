@@ -47,10 +47,6 @@ class TaskFragment: Fragment() {
     }
 
      private inner class TaskTextListener(val taskDataField: String): TextWatcher{
-         init {
-             taskDataField
-         }
-
          override fun afterTextChanged(s: Editable?) {
         }
 
