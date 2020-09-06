@@ -4,13 +4,12 @@ import androidx.lifecycle.ViewModel
 
 class TaskListViewModel : ViewModel() {
 
-    val tasks = mutableListOf<Task>()
+    private val taskRepository = TaskRepository.get()
 
-    init {
-        for (i in 0 until 100) {
-            val task = Task()
-            task.title = "task #$i"
-            tasks += task
-        }
-    }
+    val tasksListLiveData = taskRepository.getTasks()
+
+
+
+
+
 }

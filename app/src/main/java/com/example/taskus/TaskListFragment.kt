@@ -30,16 +30,32 @@ class TaskListFragment : Fragment() {
     ): View? {
         val view =
             inflater.inflate(R.layout.fragment_task_list, container, false)
-        taskRecyclerView =
-            view.findViewById(R.id.task_recycler_view) as RecyclerView
-        taskRecyclerView.layoutManager = LinearLayoutManager(context)
-        updateUI()
 
         return view
     }
 
-    private fun updateUI() {
-        val tasks = taskListViewModel.tasks
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        /*
+        This can have been done in onCreateView(), but this is better. According to StackOverFlow:
+        "We face some crashes initializing view in onCreateView...You should inflate your layout
+         in onCreateView but shouldn't initialize other views using findViewById in onCreateView
+         Because sometimes view is not properly initialized. So always use findViewById
+         in onViewCreated(when view is fully created) and it also passes the view as parameter.
+         onViewCreated is a make sure that view is fully created. This gives subclasses a chance
+          to initialize themselves once they know their view hierarchy has been completely created"
+         */
+        taskRecyclerView =
+            view.findViewById(R.id.task_recycler_view) as RecyclerView
+        taskRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        taskListViewModel.tasksListLiveData.observe(viewLifecycleOwner,
+            androidx.lifecycle.Observer {tasks->
+                updateUI(tasks)
+            })
+    }
+
+    private fun updateUI(tasks: List<Task>) {
         taskRecyclerView.adapter = TaskAdapter(tasks)
     }
 
@@ -71,6 +87,7 @@ class TaskListFragment : Fragment() {
                 : TaskHolder {
             val view = layoutInflater.inflate(
                 R.layout.fragment_task_list_item, parent, false)
+
             return TaskHolder(view)
         }
 
